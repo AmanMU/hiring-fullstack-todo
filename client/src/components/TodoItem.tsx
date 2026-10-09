@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
-import type { Todo, TodoInput } from '../api';
+import { errorMessage, type Todo, type TodoInput } from '../api';
+import { isUnsaved } from '../useTodos';
 import { PencilIcon, TrashIcon } from './icons';
 import { TodoForm } from './TodoForm';
 import styles from './TodoItem.module.css';
@@ -14,14 +15,40 @@ type TodoItemProps = {
 
 export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
+  // A save that failed reopens the editor with the user's text and the reason.
+  const [failedEdit, setFailedEdit] = useState<{ input: TodoInput; error: string } | null>(null);
   const editButtonRef = useRef<HTMLButtonElement>(null);
-  const wasEditing = useRef(false);
+  const shouldRestoreFocus = useRef(false);
 
-  // When the editor closes (Save or Cancel), give focus back to this row's Edit button.
+  // After the editor closes, give focus back to the Edit button once it's enabled again.
   useEffect(() => {
-    if (wasEditing.current && !isEditing) editButtonRef.current?.focus();
-    wasEditing.current = isEditing;
-  }, [isEditing]);
+    if (shouldRestoreFocus.current && !isEditing && !isPending) {
+      shouldRestoreFocus.current = false;
+      editButtonRef.current?.focus();
+    }
+  }, [isEditing, isPending]);
+
+  function openEditor() {
+    setFailedEdit(null);
+    setIsEditing(true);
+  }
+
+  function closeEditor() {
+    shouldRestoreFocus.current = true;
+    setIsEditing(false);
+  }
+
+  // Optimistic: close at once and show the new text; reopen with it if the save fails.
+  async function saveEdit(input: TodoInput) {
+    closeEditor();
+    try {
+      await onEdit(todo, input);
+    } catch (error) {
+      shouldRestoreFocus.current = false;
+      setFailedEdit({ input, error: errorMessage(error) });
+      setIsEditing(true);
+    }
+  }
 
   function handleDelete(event: MouseEvent<HTMLButtonElement>) {
     // Move focus to a neighbouring row first, so keyboard users keep their place in the list.
@@ -35,21 +62,23 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
     return (
       <li className={styles.item}>
         <TodoForm
-          initial={{ title: todo.title, description: todo.description ?? '' }}
+          initial={failedEdit?.input ?? { title: todo.title, description: todo.description ?? '' }}
+          initialError={failedEdit?.error}
           submitLabel="Save"
-          onSubmit={async (input) => {
-            // Closes only once saved; if the save fails, the form stays open with the text.
-            await onEdit(todo, input);
-            setIsEditing(false);
-          }}
-          onCancel={() => setIsEditing(false)}
+          onSubmit={saveEdit}
+          onCancel={closeEditor}
         />
       </li>
     );
   }
 
+  // Only a just-added todo prints in; the saved copy that replaces it appears without animating.
+  const rowClass = [styles.item, todo.done && styles.done, isUnsaved(todo) && styles.printing]
+    .filter(Boolean)
+    .join(' ');
+
   return (
-    <li className={`${styles.item} ${todo.done ? styles.done : ''}`} aria-busy={isPending}>
+    <li className={rowClass} aria-busy={isPending}>
       <input
         className={styles.checkbox}
         type="checkbox"
@@ -67,7 +96,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
           <button
             ref={editButtonRef}
             className={styles.iconButton}
-            onClick={() => setIsEditing(true)}
+            onClick={openEditor}
             disabled={isPending}
             aria-label={`Edit "${todo.title}"`}
             title="Edit"

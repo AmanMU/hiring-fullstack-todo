@@ -2,6 +2,9 @@
   display: grid;
   grid-template-columns: auto 1fr auto;
   column-gap: 12px;
+}
+
+.printing {
   animation: print 260ms ease-out;
 }
 

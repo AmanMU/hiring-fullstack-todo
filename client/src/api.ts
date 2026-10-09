@@ -23,6 +23,10 @@ type RequestOptions = {
 const NETWORK_ERROR = 'Could not reach the server. Check that it is running and try again.';
 const SERVER_ERROR = 'Something went wrong. Please try again.';
 
+export function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : SERVER_ERROR;
+}
+
 export const todosApi = {
   list: (signal?: AbortSignal) => request<Todo[]>('', { signal }),
   create: (input: TodoInput) => request<Todo>('', { method: 'POST', body: input }),
