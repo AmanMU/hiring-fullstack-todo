@@ -1,7 +1,5 @@
-.counter {
-  min-height: 100vh;
+.page {
   padding: 48px 16px;
-  box-sizing: border-box;
 }
 
 .receipt {

@@ -7,6 +7,8 @@
   --rule: #8f8f89;
   --stamp: #c8102e;
 
+  /* without this the background gradient repeats on pages shorter than the window */
+  min-height: 100%;
   font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
   font-size: 15px;
   line-height: 1.6;
@@ -24,21 +26,6 @@ input,
 textarea {
   font: inherit;
   color: inherit;
-}
-
-input:not([type='checkbox']),
-textarea {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 6px 0;
-  border: 0;
-  border-bottom: 1px dashed var(--rule);
-  background: transparent;
-}
-
-input::placeholder,
-textarea::placeholder {
-  color: var(--ink-faded);
 }
 
 button {

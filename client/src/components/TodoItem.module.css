@@ -4,19 +4,19 @@
   column-gap: 12px;
 }
 
-.printing {
-  opacity: 0.6;
-  animation: print 260ms ease-out;
-}
-
 .item + .item {
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px dashed var(--rule);
 }
 
-.item > form {
-  grid-column: 1 / -1;
+.editing {
+  display: block;
+}
+
+.unsaved {
+  opacity: 0.6;
+  animation: print 260ms ease-out;
 }
 
 .checkbox {
@@ -48,15 +48,15 @@
   font-weight: 600;
 }
 
+.done .title {
+  color: var(--ink-faded);
+  text-decoration: line-through;
+}
+
 .description {
   margin: 2px 0 0;
   color: var(--ink-faded);
   white-space: pre-wrap;
-}
-
-.done .title {
-  color: var(--ink-faded);
-  text-decoration: line-through;
 }
 
 /* fixed row heights, so showing the stamp never changes the row height */
@@ -76,6 +76,17 @@
   transition: opacity 120ms;
 }
 
+.item:hover .actions,
+.item:focus-within .actions {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .actions {
+    opacity: 1;
+  }
+}
+
 .iconButton {
   display: inline-grid;
   place-items: center;
@@ -88,17 +99,6 @@
 
 .iconButton:hover:not(:disabled) {
   background: rgb(0 0 0 / 6%);
-}
-
-.item:hover .actions,
-.item:focus-within .actions {
-  opacity: 1;
-}
-
-@media (hover: none) {
-  .actions {
-    opacity: 1;
-  }
 }
 
 .delete {

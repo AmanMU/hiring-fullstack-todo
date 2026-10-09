@@ -3,12 +3,26 @@
   gap: 4px;
 }
 
+.title,
+.description {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 0;
+  border: 0;
+  border-bottom: 1px dashed var(--rule);
+  background: transparent;
+}
+
+.title::placeholder,
+.description::placeholder {
+  color: var(--ink-faded);
+}
+
 .title {
   font-weight: 600;
 }
 
 .description {
-  min-height: 44px;
   resize: vertical;
 }
 
