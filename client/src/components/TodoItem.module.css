@@ -4,7 +4,9 @@
   column-gap: 12px;
 }
 
+/* A just-added todo, faded until the server confirms it. */
 .printing {
+  opacity: 0.6;
   animation: print 260ms ease-out;
 }
 
@@ -13,10 +15,6 @@
   margin-top: 14px;
   padding-top: 14px;
   border-top: 1px dashed var(--rule);
-}
-
-.item[aria-busy='true'] {
-  opacity: 0.6;
 }
 
 /* The inline edit form spans the whole line. */

@@ -29,6 +29,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
   }, [isEditing, isPending]);
 
   function openEditor() {
+    if (isPending) return;
     setFailedEdit(null);
     setIsEditing(true);
   }
@@ -51,6 +52,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
   }
 
   function handleDelete(event: MouseEvent<HTMLButtonElement>) {
+    if (isPending) return;
     // Move focus to a neighbouring row first, so keyboard users keep their place in the list.
     const row = event.currentTarget.closest('li');
     const neighbour = row?.nextElementSibling ?? row?.previousElementSibling;
@@ -72,8 +74,12 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
     );
   }
 
+  // A todo that isn't saved yet can't be acted on. A saved todo with a request in flight
+  // ignores repeat actions but doesn't change how it looks, so optimistic updates don't flash.
+  const unsaved = isUnsaved(todo);
+
   // Only a just-added todo prints in; the saved copy that replaces it appears without animating.
-  const rowClass = [styles.item, todo.done && styles.done, isUnsaved(todo) && styles.printing]
+  const rowClass = [styles.item, todo.done && styles.done, unsaved && styles.printing]
     .filter(Boolean)
     .join(' ');
 
@@ -83,8 +89,11 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
         className={styles.checkbox}
         type="checkbox"
         checked={todo.done}
-        disabled={isPending}
-        onChange={() => onToggle(todo)}
+        disabled={unsaved}
+        aria-disabled={isPending}
+        onChange={() => {
+          if (!isPending) onToggle(todo);
+        }}
         aria-label={`Mark "${todo.title}" as ${todo.done ? 'not done' : 'done'}`}
       />
       <div className={styles.content}>
@@ -97,7 +106,8 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
             ref={editButtonRef}
             className={styles.iconButton}
             onClick={openEditor}
-            disabled={isPending}
+            disabled={unsaved}
+            aria-disabled={isPending}
             aria-label={`Edit "${todo.title}"`}
             title="Edit"
           >
@@ -106,7 +116,8 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
           <button
             className={`${styles.iconButton} ${styles.delete}`}
             onClick={handleDelete}
-            disabled={isPending}
+            disabled={unsaved}
+            aria-disabled={isPending}
             aria-label={`Delete "${todo.title}"`}
             title="Delete"
           >
