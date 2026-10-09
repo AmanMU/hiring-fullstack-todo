@@ -26,6 +26,22 @@ Set `MONGODB_URI` in `.env` (see [MongoDB connection](#mongodb-connection)), the
 | `MONGODB_URI` | yes      |         |
 | `PORT`        | no       | `4000`  |
 
+## Project structure
+
+```
+src/
+  index.ts                  Reads env, connects to MongoDB, starts listening, shuts down cleanly
+  app.ts                    createApp(): middleware and routes, no DB access (tests use it directly)
+  routes/                   URL paths mapped to controller functions
+  controllers/              The five request handlers
+  models/                   Mongoose schema and length limits
+  validators/               zod request-body schemas and the :id check
+  middleware/               HttpError, the 404 handler and the JSON error handler
+test/                       API tests with supertest against an in-memory MongoDB
+```
+
+There's no service layer: with five handlers of a few lines each, it would only pass calls through.
+
 ## MongoDB connection
 
 **Atlas (what I used).** Create a free M0 cluster, add a database user, and add your IP address under Network Access. Copy the driver connection string and add the database name after `.net/`:
