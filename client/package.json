@@ -1,13 +1,12 @@
 {
   "name": "todo-client",
   "private": true,
-  "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "typecheck": "tsc -b",
     "lint": "oxlint",
-    "format": "prettier --write .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -16,13 +15,12 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
+    "@types/node": "^22.20.5",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
-    "oxlint": "^1.81.0",
-    "prettier": "^3.9.9",
-    "typescript": "~6.0.2",
-    "vite": "^8.3.0"
+    "oxlint": "^1.87.0",
+    "typescript": "~6.0.3",
+    "vite": "^8.3.4"
   }
 }
