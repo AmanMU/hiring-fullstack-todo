@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH, type TodoInput } from '../api';
+import styles from './TodoForm.module.css';
 
 type TodoFormProps = {
   initial?: TodoInput;
@@ -45,7 +46,7 @@ export function TodoForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate>
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <input
         aria-label="Title"
         placeholder="What needs doing?"
@@ -56,21 +57,28 @@ export function TodoForm({
         autoFocus={onCancel !== undefined}
       />
       <textarea
+        className={styles.description}
         aria-label="Description (optional)"
         placeholder="Description (optional)"
         value={description}
         maxLength={DESCRIPTION_MAX_LENGTH}
         onChange={(event) => setDescription(event.target.value)}
       />
-      {error && <p role="alert">{error}</p>}
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving…' : submitLabel}
-      </button>
-      {onCancel && (
-        <button type="button" onClick={onCancel}>
-          Cancel
-        </button>
+      {error && (
+        <p className={styles.error} role="alert">
+          {error}
+        </p>
       )}
+      <div className={styles.actions}>
+        <button className={styles.submit} type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Saving…' : submitLabel}
+        </button>
+        {onCancel && (
+          <button type="button" onClick={onCancel}>
+            Cancel
+          </button>
+        )}
+      </div>
     </form>
   );
 }

@@ -1,0 +1,39 @@
+.main {
+  max-width: 640px;
+  margin: 48px auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 16px;
+}
+
+.heading {
+  margin: 0;
+}
+
+.status {
+  color: var(--muted);
+  text-align: center;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  color: var(--danger);
+}
+
+.banner p {
+  margin: 0;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}

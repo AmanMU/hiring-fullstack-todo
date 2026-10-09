@@ -1,0 +1,25 @@
+.form {
+  display: grid;
+  gap: 8px;
+}
+
+.description {
+  min-height: 60px;
+  resize: vertical;
+}
+
+.error {
+  margin: 0;
+  color: var(--danger);
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.submit {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Todo, TodoInput } from '../api';
 import { TodoForm } from './TodoForm';
+import styles from './TodoItem.module.css';
 
 type TodoItemProps = {
   todo: Todo;
@@ -15,7 +16,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
 
   if (isEditing) {
     return (
-      <li>
+      <li className={styles.item}>
         <TodoForm
           initial={{ title: todo.title, description: todo.description ?? '' }}
           submitLabel="Save"
@@ -31,32 +32,36 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
   }
 
   return (
-    <li aria-busy={isPending}>
+    <li className={`${styles.item} ${todo.done ? styles.done : ''}`} aria-busy={isPending}>
       <input
+        className={styles.checkbox}
         type="checkbox"
         checked={todo.done}
         disabled={isPending}
         onChange={() => onToggle(todo)}
         aria-label={`Mark "${todo.title}" as ${todo.done ? 'not done' : 'done'}`}
       />
-      <div>
-        <p>{todo.title}</p>
-        {todo.description && <p>{todo.description}</p>}
+      <div className={styles.content}>
+        <p className={styles.title}>{todo.title}</p>
+        {todo.description && <p className={styles.description}>{todo.description}</p>}
       </div>
-      <button
-        onClick={() => setIsEditing(true)}
-        disabled={isPending}
-        aria-label={`Edit "${todo.title}"`}
-      >
-        Edit
-      </button>
-      <button
-        onClick={() => onDelete(todo)}
-        disabled={isPending}
-        aria-label={`Delete "${todo.title}"`}
-      >
-        Delete
-      </button>
+      <div className={styles.actions}>
+        <button
+          onClick={() => setIsEditing(true)}
+          disabled={isPending}
+          aria-label={`Edit "${todo.title}"`}
+        >
+          Edit
+        </button>
+        <button
+          className={styles.delete}
+          onClick={() => onDelete(todo)}
+          disabled={isPending}
+          aria-label={`Delete "${todo.title}"`}
+        >
+          Delete
+        </button>
+      </div>
     </li>
   );
 }

@@ -1,0 +1,65 @@
+.item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  animation: appear 150ms ease-out;
+}
+
+.item[aria-busy='true'] {
+  opacity: 0.7;
+}
+
+/* The inline edit form fills the row. */
+.item > form {
+  flex: 1;
+}
+
+.checkbox {
+  margin-top: 5px;
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The line-through is always there but transparent, so marking done fades it in. */
+.title {
+  margin: 0;
+  text-decoration: line-through transparent;
+  transition:
+    color 200ms,
+    text-decoration-color 200ms;
+}
+
+.done .title {
+  color: var(--muted);
+  text-decoration-color: currentColor;
+}
+
+.description {
+  margin: 4px 0 0;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.delete {
+  color: var(--danger);
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}

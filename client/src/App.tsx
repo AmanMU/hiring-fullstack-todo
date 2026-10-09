@@ -1,6 +1,7 @@
 import { TodoForm } from './components/TodoForm';
 import { TodoItem } from './components/TodoItem';
 import { useTodos } from './useTodos';
+import styles from './App.module.css';
 
 function App() {
   const {
@@ -17,30 +18,32 @@ function App() {
   } = useTodos();
 
   return (
-    <main>
-      <h1>Todos</h1>
+    <main className={styles.main}>
+      <h1 className={styles.heading}>Todos</h1>
       <TodoForm submitLabel="Add todo" onSubmit={createTodo} />
 
       {actionError && (
-        <div role="alert">
-          <span>{actionError}</span>
+        <div className={styles.banner} role="alert">
+          <p>{actionError}</p>
           <button onClick={dismissError}>Dismiss</button>
         </div>
       )}
 
-      {loadState === 'loading' && <p>Loading todos…</p>}
+      {loadState === 'loading' && <p className={styles.status}>Loading todos…</p>}
 
       {loadState === 'error' && (
-        <div role="alert">
+        <div className={styles.banner} role="alert">
           <p>Could not load your todos.</p>
           <button onClick={reload}>Try again</button>
         </div>
       )}
 
-      {loadState === 'ready' && todos.length === 0 && <p>No todos yet. Add one above.</p>}
+      {loadState === 'ready' && todos.length === 0 && (
+        <p className={styles.status}>No todos yet. Add one above.</p>
+      )}
 
       {loadState === 'ready' && todos.length > 0 && (
-        <ul>
+        <ul className={styles.list}>
           {todos.map((todo) => (
             <TodoItem
               key={todo._id}
