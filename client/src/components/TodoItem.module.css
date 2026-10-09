@@ -1,7 +1,6 @@
 .item {
-  position: relative;
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   column-gap: 12px;
   animation: print 260ms ease-out;
 }
@@ -63,21 +62,55 @@
   text-decoration: line-through;
 }
 
-.actions {
-  grid-column: 2;
+/* Right-hand column: actions on top, stamp below. Its size is always reserved (the min-height
+   holds room for the stamp), so neither hovering nor ticking an item shifts the layout. */
+.side {
   display: flex;
-  gap: 16px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-height: 58px;
+}
+
+/* Hidden with opacity, not display, so they keep their space and stay reachable by keyboard. */
+.actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 120ms;
+}
+
+.iconButton {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.iconButton:hover:not(:disabled) {
+  background: rgb(0 0 0 / 6%);
+}
+
+.item:hover .actions,
+.item:focus-within .actions {
+  opacity: 1;
+}
+
+/* Touch screens have no hover, so show the actions there all the time. */
+@media (hover: none) {
+  .actions {
+    opacity: 1;
+  }
 }
 
 .delete {
   color: var(--stamp);
 }
 
-/* Lands in the empty space beside the actions, so it never covers the title. */
 .stamp {
-  position: absolute;
-  right: 0;
-  bottom: 4px;
   padding: 0 6px;
   border: 2px solid var(--stamp);
   border-radius: 4px;

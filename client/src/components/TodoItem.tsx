@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import type { Todo, TodoInput } from '../api';
+import { PencilIcon, TrashIcon } from './icons';
 import { TodoForm } from './TodoForm';
 import styles from './TodoItem.module.css';
 
@@ -61,29 +62,34 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
         <p className={styles.title}>{todo.title}</p>
         {todo.description && <p className={styles.description}>{todo.description}</p>}
       </div>
-      <div className={styles.actions}>
-        <button
-          ref={editButtonRef}
-          onClick={() => setIsEditing(true)}
-          disabled={isPending}
-          aria-label={`Edit "${todo.title}"`}
-        >
-          Edit
-        </button>
-        <button
-          className={styles.delete}
-          onClick={handleDelete}
-          disabled={isPending}
-          aria-label={`Delete "${todo.title}"`}
-        >
-          Delete
-        </button>
+      <div className={styles.side}>
+        <div className={styles.actions}>
+          <button
+            ref={editButtonRef}
+            className={styles.iconButton}
+            onClick={() => setIsEditing(true)}
+            disabled={isPending}
+            aria-label={`Edit "${todo.title}"`}
+            title="Edit"
+          >
+            <PencilIcon />
+          </button>
+          <button
+            className={`${styles.iconButton} ${styles.delete}`}
+            onClick={handleDelete}
+            disabled={isPending}
+            aria-label={`Delete "${todo.title}"`}
+            title="Delete"
+          >
+            <TrashIcon />
+          </button>
+        </div>
+        {todo.done && (
+          <span className={styles.stamp} aria-hidden="true">
+            Done
+          </span>
+        )}
       </div>
-      {todo.done && (
-        <span className={styles.stamp} aria-hidden="true">
-          Done
-        </span>
-      )}
     </li>
   );
 }
