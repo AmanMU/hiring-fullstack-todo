@@ -63,14 +63,14 @@
   text-decoration: line-through;
 }
 
-/* Right-hand column: actions on top, stamp below. Its size is always reserved (the min-height
-   holds room for the stamp), so neither hovering nor ticking an item shifts the layout. */
+/* Right-hand column: actions on top, stamp below. Both rows have a fixed height, so the column
+   is the same size with or without the stamp: no shift on hover or when ticking an item. */
 .side {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-  min-height: 58px;
+  display: grid;
+  grid-template-rows: 28px 28px;
+  row-gap: 6px;
+  justify-items: end;
+  align-content: start;
 }
 
 /* Hidden with opacity, not display, so they keep their space and stay reachable by keyboard. */
