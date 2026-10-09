@@ -19,15 +19,26 @@ npm run dev                          # API on :4000, client on :5173
 
 Open http://localhost:5173.
 
-From the root, `npm run build`, `npm run lint`, `npm run typecheck` and `npm test` run the matching script in each app. Turborepo runs them in parallel and caches the results, so a repeat run with no changes finishes instantly.
+The other root scripts: `npm run build`, `npm run lint` and `npm run typecheck` run in both apps, `npm test` runs the server's tests, and `npm run format` runs Prettier over the repo. Turborepo runs the per-app scripts in parallel and caches the results, so a repeat run with no changes finishes almost instantly.
 
 ## How it fits together
 
-The client calls `/api/todos`. In development, Vite proxies `/api` to the server on port 4000, so the browser talks to a single origin and the server needs no CORS setup. The server validates every request with zod, stores todos in MongoDB and returns JSON.
+The client calls `/api/todos`. In development, Vite proxies `/api` to the server on port 4000, so the browser talks to a single origin and the server needs no CORS setup. The server validates request bodies with zod, stores todos in MongoDB and returns JSON.
 
 ## Decisions and trade-offs
 
-- **npm workspaces + Turborepo.** One install, one lockfile and one `npm run dev` for both apps. Turborepo adds parallel runs and caching with a 15-line `turbo.json`. I chose npm over pnpm so reviewers don't need another tool. The apps share only two length limits, duplicated with a comment pointing at the server; a shared package would need its own build step for that.
-- **No data-fetching library.** A ~130-line `useTodos` hook holds the list, tracks loading and errors, and applies create, edit, toggle and delete optimistically, rolling back only the affected todo on failure. A failed create or edit gives the typed text back. For one list on one page, TanStack Query would add concepts without removing much code.
-- **Atomic toggle.** `PATCH /api/todos/:id/done` flips `done` inside MongoDB with an update pipeline, so two quick toggles can't race each other into the wrong state.
-- **Tests where the logic is.** The server has integration tests that run against an in-memory MongoDB, so they never touch real data. The client has none.
+### Monorepo
+
+I used npm workspaces with Turborepo: one install, one lockfile, and one `npm run dev` that starts both apps. I stayed on npm rather than pnpm so nobody needs another tool to run it. The apps don't share code. The only overlap is the two length limits, which are duplicated with a comment pointing at the server, because a shared package would need its own build step just for those.
+
+### State on the client
+
+There's no data-fetching library. A `useTodos` hook holds the list, tracks loading and errors, and makes create, update, toggle and delete optimistic: the list changes straight away, and only the affected todo rolls back if the request fails. A failed create or edit puts the typed text back, so nothing is lost. For one list on one page, TanStack Query would add more concepts than it would remove code.
+
+### Toggling
+
+`PATCH /api/todos/:id/done` flips `done` inside MongoDB with an update pipeline instead of reading the todo and writing it back, so two quick toggles can't race each other.
+
+### Tests
+
+Only the server is tested. Its integration tests run against an in-memory MongoDB, so they never touch real data, and they cover the API contract including the error cases. I checked the client's rollbacks by hand; the first client test I'd add is a failed toggle rolling back.

@@ -2,16 +2,15 @@
 
 REST API for the TODO app: Express 5 and TypeScript, with data in MongoDB through Mongoose.
 
-## Setup and run
+## Running it
 
-Requires Node.js 22.12 or newer. `npm install` installs the whole workspace, whether you run it here or at the repo root, and `npm run dev` at the root starts this server together with the client.
+Run everything from the repo root (see the [root README](../README.md)). The server needs a `.env` file:
 
 ```bash
-npm install
 cp .env.example .env
 ```
 
-Set `MONGODB_URI` in `.env` (see [MongoDB connection](#mongodb-connection)), then:
+Set `MONGODB_URI` in it (see [MongoDB connection](#mongodb-connection)). To work on the server alone:
 
 | Command                           | What it does                                       |
 | --------------------------------- | -------------------------------------------------- |
@@ -70,7 +69,7 @@ The tests need neither: they start a throwaway in-memory MongoDB. Its binary dow
 
 ## API
 
-Every response is JSON. Errors have one shape: `{ "error": { "message": "...", "details": { "title": ["..."] } } }`, where `details` appears only for field validation errors.
+Responses are JSON, except the empty 204 from DELETE. Errors have one shape: `{ "error": { "message": "...", "details": { "title": ["..."] } } }`, where `details` appears only for field validation errors.
 
 | Method | Path                  | Body                                     | Success                          |
 | ------ | --------------------- | ---------------------------------------- | -------------------------------- |
@@ -80,7 +79,7 @@ Every response is JSON. Errors have one shape: `{ "error": { "message": "...", "
 | PATCH  | `/api/todos/:id/done` |                                          | 200 with `done` flipped          |
 | DELETE | `/api/todos/:id`      |                                          | 204                              |
 
-Error statuses: 400 for invalid input, invalid JSON or a malformed id; 404 when the todo doesn't exist or the route is unknown; 413 for a body over 10 KB; 500 for anything else. A 500 is logged on the server and never includes a stack trace.
+Error statuses: 400 for invalid input, a body that isn't a JSON object, or a malformed id; 404 when the todo doesn't exist or the route is unknown; 413 for a body over 10 KB; 500 for anything else. A 500 is logged on the server and never includes a stack trace.
 
 A todo:
 
