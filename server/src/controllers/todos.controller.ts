@@ -1,10 +1,10 @@
 import type { Request, Response } from 'express';
 import { HttpError } from '../middleware/errors.js';
-import { TodoModel } from '../models/todo.model.js';
+import { NEWEST_FIRST, TodoModel } from '../models/todo.model.js';
 import { createTodoSchema, updateTodoSchema } from '../validators/todo.validator.js';
 
 export async function listTodos(_req: Request, res: Response) {
-  const todos = await TodoModel.find().sort({ createdAt: -1, _id: -1 }).lean();
+  const todos = await TodoModel.find().sort(NEWEST_FIRST).lean();
   res.json(todos);
 }
 
@@ -16,8 +16,11 @@ export async function createTodo(req: Request, res: Response) {
 
 export async function updateTodo(req: Request, res: Response) {
   const { title, description } = updateTodoSchema.parse(req.body);
+  // Mongoose drops undefined keys, so a field the client didn't send stays as it is
   const update =
-    description === '' ? { title, $unset: { description: 1 } } : { title, description };
+    description === ''
+      ? { $set: { title }, $unset: { description: 1 } }
+      : { $set: { title, description } };
   const todo = await TodoModel.findByIdAndUpdate(req.params.id, update, {
     returnDocument: 'after',
     runValidators: true,
