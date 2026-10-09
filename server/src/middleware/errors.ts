@@ -32,7 +32,12 @@ function describeError(err: unknown): ErrorDescription {
   }
   if (err instanceof z.ZodError) {
     const { fieldErrors } = z.flattenError(err);
-    return { status: 400, message: err.issues[0].message, details: fieldErrors };
+    const hasFieldErrors = Object.keys(fieldErrors).length > 0;
+    return {
+      status: 400,
+      message: err.issues[0].message,
+      details: hasFieldErrors ? fieldErrors : undefined,
+    };
   }
   if (hasType(err, 'entity.parse.failed')) {
     return { status: 400, message: 'Request body must be valid JSON' };
@@ -40,10 +45,9 @@ function describeError(err: unknown): ErrorDescription {
   if (hasType(err, 'entity.too.large')) {
     return { status: 413, message: 'Request body is too large' };
   }
-  // e.g. a malformed URL encoding or unsupported charset, which Express tags with a 4xx status
-  const status = clientErrorStatus(err);
-  if (status !== undefined && err instanceof Error) {
-    return { status, message: err.message };
+  // Express tags other client mistakes, like a malformed URL encoding, with a 4xx status
+  if (isClientError(err)) {
+    return { status: err.status, message: err.message };
   }
   return { status: 500, message: 'Something went wrong. Please try again.' };
 }
@@ -52,8 +56,12 @@ function hasType(err: unknown, type: string): boolean {
   return typeof err === 'object' && err !== null && 'type' in err && err.type === type;
 }
 
-function clientErrorStatus(err: unknown): number | undefined {
-  if (typeof err !== 'object' || err === null || !('status' in err)) return undefined;
-  const { status } = err;
-  return typeof status === 'number' && status >= 400 && status < 500 ? status : undefined;
+function isClientError(err: unknown): err is Error & { status: number } {
+  return (
+    err instanceof Error &&
+    'status' in err &&
+    typeof err.status === 'number' &&
+    err.status >= 400 &&
+    err.status < 500
+  );
 }

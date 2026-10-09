@@ -43,6 +43,11 @@ describe('POST /api/todos', () => {
       .send('{"title":')
       .expect(400);
   });
+
+  it('explains a body that is not JSON', async () => {
+    const res = await request(app).post('/api/todos').type('form').send('title=x').expect(400);
+    expect(res.body.error).toEqual({ message: 'Request body must be a JSON object' });
+  });
 });
 
 describe('PUT /api/todos/:id', () => {

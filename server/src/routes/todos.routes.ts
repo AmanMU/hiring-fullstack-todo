@@ -6,11 +6,11 @@ import {
   toggleTodo,
   updateTodo,
 } from '../controllers/todos.controller.js';
-import { validateId } from '../validators/validate-id.js';
+import { validateTodoId } from '../validators/todo.validator.js';
 
 export const todosRouter = Router();
 
-todosRouter.param('id', validateId);
+todosRouter.param('id', validateTodoId);
 
 todosRouter.get('/', listTodos);
 todosRouter.post('/', createTodo);
