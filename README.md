@@ -2,6 +2,8 @@
 
 A small full-stack TODO app. The list is styled as a shop receipt: add a line, tick it off, and it gets stamped DONE.
 
+It's a monorepo built on npm workspaces, with Turborepo running tasks across the two apps:
+
 - [`client/`](client/README.md): React 19 + TypeScript, built with Vite
 - [`server/`](server/README.md): Express 5 + TypeScript, MongoDB through Mongoose
 
@@ -9,24 +11,15 @@ A small full-stack TODO app. The list is styled as a shop receipt: add a line, t
 
 You need Node.js 22.12 or newer and a MongoDB connection string, either Atlas or local. See [MongoDB connection](server/README.md#mongodb-connection).
 
-1. Start the API:
+```bash
+npm install                          # installs both apps
+cp server/.env.example server/.env   # then set MONGODB_URI
+npm run dev                          # API on :4000, client on :5173
+```
 
-   ```bash
-   cd server
-   npm install
-   cp .env.example .env   # then set MONGODB_URI
-   npm run dev
-   ```
+Open http://localhost:5173.
 
-2. In a second terminal, start the client:
-
-   ```bash
-   cd client
-   npm install
-   npm run dev
-   ```
-
-3. Open http://localhost:5173.
+From the root, `npm run build`, `npm run lint`, `npm run typecheck` and `npm test` run the matching script in each app. Turborepo runs them in parallel and caches the results, so a repeat run with no changes finishes instantly.
 
 ## How it fits together
 
@@ -34,7 +27,7 @@ The client calls `/api/todos`. In development, Vite proxies `/api` to the server
 
 ## Decisions and trade-offs
 
-- **Two independent apps, not a monorepo.** The brief offers a bonus for a monorepo; I kept `client/` and `server/` as separate npm projects to keep the setup small. The only thing they share is two length limits, which are duplicated with a comment pointing at the server.
-- **No data-fetching library.** A ~120-line `useTodos` hook holds the list, tracks loading and errors, and applies create, edit, toggle and delete optimistically, rolling back only the affected todo on failure. A failed create or edit gives the typed text back. For one list on one page, TanStack Query would add concepts without removing much code.
+- **npm workspaces + Turborepo.** One install, one lockfile and one `npm run dev` for both apps. Turborepo adds parallel runs and caching with a 15-line `turbo.json`. I chose npm over pnpm so reviewers don't need another tool. The apps share only two length limits, duplicated with a comment pointing at the server; a shared package would need its own build step for that.
+- **No data-fetching library.** A ~130-line `useTodos` hook holds the list, tracks loading and errors, and applies create, edit, toggle and delete optimistically, rolling back only the affected todo on failure. A failed create or edit gives the typed text back. For one list on one page, TanStack Query would add concepts without removing much code.
 - **Atomic toggle.** `PATCH /api/todos/:id/done` flips `done` inside MongoDB with an update pipeline, so two quick toggles can't race each other into the wrong state.
 - **Tests where the logic is.** The server has integration tests that run against an in-memory MongoDB, so they never touch real data. The client has none.

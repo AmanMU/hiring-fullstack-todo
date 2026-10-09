@@ -4,10 +4,10 @@ The React 19 and TypeScript front end for the TODO app, built with Vite. The lis
 
 ## Setup and run
 
-Requires Node.js 22.12 or newer, and the [server](../server/README.md) running on port 4000.
+Requires Node.js 22.12 or newer, and the [server](../server/README.md) running on port 4000. The quickest way is `npm install` and `npm run dev` from the repo root, which start both apps. To run the client on its own:
 
 ```bash
-npm install
+npm install   # installs the whole workspace, from here or the root
 npm run dev
 ```
 

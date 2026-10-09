@@ -4,7 +4,7 @@ REST API for the TODO app: Express 5 and TypeScript, with data in MongoDB throug
 
 ## Setup and run
 
-Requires Node.js 22.12 or newer.
+Requires Node.js 22.12 or newer. `npm install` installs the whole workspace, whether you run it here or at the repo root, and `npm run dev` at the root starts this server together with the client.
 
 ```bash
 npm install
