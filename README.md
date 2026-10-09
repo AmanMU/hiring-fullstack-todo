@@ -35,6 +35,6 @@ The client calls `/api/todos`. In development, Vite proxies `/api` to the server
 ## Decisions and trade-offs
 
 - **Two independent apps, not a monorepo.** The brief offers a bonus for a monorepo; I kept `client/` and `server/` as separate npm projects to keep the setup small. The only thing they share is two length limits, which are duplicated with a comment pointing at the server.
-- **No data-fetching library.** A ~90-line `useTodos` hook holds the list, tracks loading and errors, and applies toggle, edit and delete optimistically with rollback. For one list on one page, TanStack Query would add concepts without removing much code.
+- **No data-fetching library.** A ~90-line `useTodos` hook holds the list, tracks loading and errors, and applies toggle and delete optimistically with rollback. Create and edit wait for the server, so a failed save never loses what you typed. For one list on one page, TanStack Query would add concepts without removing much code.
 - **Atomic toggle.** `PATCH /api/todos/:id/done` flips `done` inside MongoDB with an update pipeline, so two quick toggles can't race each other into the wrong state.
 - **Tests where the logic is.** The server has integration tests that run against an in-memory MongoDB, so they never touch real data. The client has none.
