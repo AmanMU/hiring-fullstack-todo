@@ -48,6 +48,7 @@ export function TodoForm({
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <input
+        className={styles.title}
         aria-label="Title"
         placeholder="What needs doing?"
         value={title}

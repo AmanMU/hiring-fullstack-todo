@@ -62,6 +62,11 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
           Delete
         </button>
       </div>
+      {todo.done && (
+        <span className={styles.stamp} aria-hidden="true">
+          Done
+        </span>
+      )}
     </li>
   );
 }

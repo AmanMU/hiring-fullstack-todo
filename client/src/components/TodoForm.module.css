@@ -1,25 +1,33 @@
 .form {
   display: grid;
-  gap: 8px;
+  gap: 4px;
+}
+
+.title {
+  font-weight: 600;
 }
 
 .description {
-  min-height: 60px;
+  min-height: 44px;
   resize: vertical;
 }
 
 .error {
   margin: 0;
-  color: var(--danger);
+  color: var(--stamp);
 }
 
 .actions {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
 }
 
+/* The main action is printed in reverse: paper-coloured text on ink. */
 .submit {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: #ffffff;
+  padding: 4px 12px;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
 }

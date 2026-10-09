@@ -1,30 +1,18 @@
 :root {
-  --bg: #f6f7f9;
-  --surface: #ffffff;
-  --text: #1f2328;
-  --muted: #59636e;
-  --border: #d1d9e0;
-  --accent: #2563eb;
-  --danger: #c62828;
-  --radius: 8px;
+  --counter: #3a4750;
+  --paper: #fbfbf8;
+  --ink: #232323;
+  --ink-faded: #5f5f5f;
+  --rule: #8f8f89;
+  --stamp: #c8102e;
 
-  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-  line-height: 1.5;
-  color: var(--text);
-  background: var(--bg);
-  color-scheme: light dark;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #0d1117;
-    --surface: #161b22;
-    --text: #e6edf3;
-    --muted: #9198a1;
-    --border: #3d444d;
-    --accent: #4493f8;
-    --danger: #f85149;
-  }
+  font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--counter);
+  /* The receipt is a physical object: paper stays light whatever the OS theme. */
+  color-scheme: light;
 }
 
 body {
@@ -40,28 +28,36 @@ textarea {
 
 input:not([type='checkbox']),
 textarea {
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 0;
+  border: 0;
+  border-bottom: 1px dashed var(--rule);
+  background: transparent;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ink-faded);
 }
 
 button {
-  padding: 6px 12px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  text-decoration: underline dotted;
+  text-underline-offset: 4px;
   cursor: pointer;
 }
 
 button:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
