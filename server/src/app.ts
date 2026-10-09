@@ -1,7 +1,7 @@
 import express from 'express';
 import helmet from 'helmet';
-import { errorHandler, notFound } from './errors.js';
-import { todosRouter } from './todos.routes.js';
+import { errorHandler, notFound } from './middleware/errors.js';
+import { todosRouter } from './routes/todos.routes.js';
 
 const JSON_BODY_LIMIT = '10kb';
 

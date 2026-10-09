@@ -1,8 +1,10 @@
 import { z } from 'zod';
-import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from './todo.model.js';
+import { DESCRIPTION_MAX_LENGTH, TITLE_MAX_LENGTH } from '../models/todo.model.js';
 
 const title = z
-  .string({ error: (issue) => (issue.input === undefined ? 'Title is required' : 'Title must be text') })
+  .string({
+    error: (issue) => (issue.input === undefined ? 'Title is required' : 'Title must be text'),
+  })
   .trim()
   .min(1, 'Title is required')
   .max(TITLE_MAX_LENGTH, `Title must be at most ${TITLE_MAX_LENGTH} characters`);

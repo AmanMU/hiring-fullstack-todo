@@ -8,7 +8,9 @@ const port = Number(process.env.PORT) || DEFAULT_PORT;
 const mongoUri = process.env.MONGODB_URI;
 
 if (!mongoUri) {
-  console.error('MONGODB_URI is not set. Copy .env.example to .env and add your connection string.');
+  console.error(
+    'MONGODB_URI is not set. Copy .env.example to .env and add your connection string.',
+  );
   process.exit(1);
 }
 
