@@ -1,0 +1,17 @@
+node_modules/
+dist/
+coverage/
+
+# Secrets: only the .env.example templates are committed
+.env
+.env.*
+!.env.example
+
+*.log
+.DS_Store
+.idea/
+.vscode/
+
+# Demo recordings are uploaded to the PR, not committed
+*.mp4
+*.mov
