@@ -24,8 +24,8 @@ Open http://localhost:5173. Vite forwards `/api` requests to `http://localhost:4
 
 - `src/api.ts` is a small `fetch` wrapper. Every failure becomes an `Error` whose message is safe to show the user.
 - `src/useTodos.ts` holds the list and its loading state, and exposes create, toggle, edit and delete.
-- Toggle and delete are optimistic. The UI changes at once, and if the request fails, that one item rolls back and a dismissible banner says why. While an item has a request in flight its controls are disabled, so a double click can't send two toggles.
-- Create and edit wait for the server, so the form can keep what you typed if the save fails, and show the reason under the inputs.
+- Every action is optimistic: the list changes at once, and if the request fails, only that todo rolls back. While a todo has a request in flight its controls are disabled, so a double click can't send two toggles.
+- A new todo appears immediately (faded, with a temporary id) and is swapped for the saved copy when the server answers. If the save fails, the row disappears and your text goes back into the form with the reason. A failed edit reopens the editor with your text. Toggle and delete failures show in a dismissible banner.
 - `src/components/TodoForm.tsx` is used both to add a todo and to edit one in place. The title field takes focus when the app opens, so you can start typing straight away.
 
 ## Assumptions and limitations
