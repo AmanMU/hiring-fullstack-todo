@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import { errorMessage, type Todo, type TodoInput } from '../api';
 import { isUnsaved } from '../useTodos';
-import { PencilIcon, TrashIcon } from './icons';
+import { Pencil, Trash2 } from 'lucide-react';
 import { TodoForm } from './TodoForm';
 import styles from './TodoItem.module.css';
 
@@ -101,7 +101,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
             aria-label={`Edit "${todo.title}"`}
             title="Edit"
           >
-            <PencilIcon />
+            <Pencil size={18} strokeWidth={1.75} aria-hidden />
           </button>
           <button
             className={`${styles.iconButton} ${styles.delete}`}
@@ -110,7 +110,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
             aria-label={`Delete "${todo.title}"`}
             title="Delete"
           >
-            <TrashIcon />
+            <Trash2 size={18} strokeWidth={1.75} aria-hidden />
           </button>
         </div>
         {todo.done && (
