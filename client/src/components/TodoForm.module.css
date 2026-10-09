@@ -1,0 +1,46 @@
+.form {
+  display: grid;
+  gap: 4px;
+}
+
+.title,
+.description {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 0;
+  border: 0;
+  border-bottom: 1px dashed var(--rule);
+  background: transparent;
+}
+
+.title::placeholder,
+.description::placeholder {
+  color: var(--ink-faded);
+}
+
+.title {
+  font-weight: 600;
+}
+
+.description {
+  resize: vertical;
+}
+
+.error {
+  margin: 0;
+  color: var(--stamp);
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.submit {
+  padding: 4px 12px;
+  background: var(--ink);
+  color: var(--paper);
+  text-decoration: none;
+}
