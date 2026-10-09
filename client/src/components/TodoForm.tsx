@@ -12,7 +12,6 @@ type TodoFormProps = {
 
 const EMPTY_INPUT: TodoInput = { title: '', description: '' };
 
-// Used to add a todo and, with `initial` and `onCancel`, to edit one in place.
 export function TodoForm({
   initial = EMPTY_INPUT,
   initialError,
@@ -33,7 +32,6 @@ export function TodoForm({
       return;
     }
 
-    // Optimistic: clear at once so the next todo can be typed while this one saves.
     setError(null);
     setTitle('');
     setDescription('');
@@ -41,7 +39,7 @@ export function TodoForm({
     try {
       await onSubmit(input);
     } catch (submitError) {
-      // Give the text back for a retry, unless the user has already started typing something new.
+      // don't overwrite anything the user has typed since
       setTitle((current) => current || input.title);
       setDescription((current) => current || input.description);
       setError(errorMessage(submitError));
@@ -50,7 +48,6 @@ export function TodoForm({
 
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
-      {/* Focused on open, so typing goes straight into the title. */}
       <input
         ref={titleRef}
         className={styles.title}

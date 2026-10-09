@@ -5,7 +5,6 @@ import { todosRouter } from './routes/todos.routes.js';
 
 const JSON_BODY_LIMIT = '10kb';
 
-// Builds the app without connecting to MongoDB or listening, so tests can use it directly.
 export function createApp() {
   const app = express();
   app.use(helmet());

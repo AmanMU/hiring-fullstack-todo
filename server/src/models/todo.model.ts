@@ -12,7 +12,7 @@ const todoSchema = new Schema(
   { timestamps: true, versionKey: false },
 );
 
-// Backs the newest-first list query; _id breaks ties between todos created in the same millisecond.
+// _id breaks ties between todos created in the same millisecond
 todoSchema.index({ createdAt: -1, _id: -1 });
 
 export const TodoModel = model('Todo', todoSchema);

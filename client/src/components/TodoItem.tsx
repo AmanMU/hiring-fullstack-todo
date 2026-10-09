@@ -15,12 +15,10 @@ type TodoItemProps = {
 
 export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
-  // A save that failed reopens the editor with the user's text and the reason.
   const [failedEdit, setFailedEdit] = useState<{ input: TodoInput; error: string } | null>(null);
   const editButtonRef = useRef<HTMLButtonElement>(null);
   const shouldRestoreFocus = useRef(false);
 
-  // After the editor closes, give focus back to the Edit button once it's enabled again.
   useEffect(() => {
     if (shouldRestoreFocus.current && !isEditing && !isPending) {
       shouldRestoreFocus.current = false;
@@ -39,7 +37,6 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
     setIsEditing(false);
   }
 
-  // Optimistic: close at once and show the new text; reopen with it if the save fails.
   async function saveEdit(input: TodoInput) {
     closeEditor();
     try {
@@ -53,7 +50,6 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
 
   function handleDelete(event: MouseEvent<HTMLButtonElement>) {
     if (isPending) return;
-    // Move focus to a neighbouring row first, so keyboard users keep their place in the list.
     const row = event.currentTarget.closest('li');
     const neighbour = row?.nextElementSibling ?? row?.previousElementSibling;
     neighbour?.querySelector<HTMLElement>('input')?.focus();
@@ -74,11 +70,8 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
     );
   }
 
-  // A todo that isn't saved yet can't be acted on. A saved todo with a request in flight
-  // ignores repeat actions but doesn't change how it looks, so optimistic updates don't flash.
+  // pending rows ignore clicks instead of being disabled, so optimistic updates don't flash
   const unsaved = isUnsaved(todo);
-
-  // Only a just-added todo prints in; the saved copy that replaces it appears without animating.
   const rowClass = [styles.item, todo.done && styles.done, unsaved && styles.printing]
     .filter(Boolean)
     .join(' ');

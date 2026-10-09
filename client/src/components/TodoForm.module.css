@@ -24,7 +24,6 @@
   margin-top: 8px;
 }
 
-/* The main action is printed in reverse: paper-coloured text on ink. */
 .submit {
   padding: 4px 12px;
   background: var(--ink);

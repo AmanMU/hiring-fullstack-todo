@@ -10,14 +10,12 @@ export async function listTodos(_req: Request, res: Response) {
 
 export async function createTodo(req: Request, res: Response) {
   const { title, description } = createTodoSchema.parse(req.body);
-  // An empty description is stored as absent rather than as ''.
   const todo = await TodoModel.create({ title, description: description || undefined });
   res.status(201).json(todo);
 }
 
 export async function updateTodo(req: Request, res: Response) {
   const { title, description } = updateTodoSchema.parse(req.body);
-  // Sending description: '' clears it.
   const update =
     description === '' ? { title, $unset: { description: 1 } } : { title, description };
   const todo = await TodoModel.findByIdAndUpdate(req.params.id, update, {
@@ -28,7 +26,7 @@ export async function updateTodo(req: Request, res: Response) {
 }
 
 export async function toggleTodo(req: Request, res: Response) {
-  // The pipeline flips `done` inside MongoDB in one atomic step, so two quick toggles can't race.
+  // flipped inside MongoDB so two quick toggles can't race
   const todo = await TodoModel.findByIdAndUpdate(
     req.params.id,
     [{ $set: { done: { $not: ['$done'] } } }],

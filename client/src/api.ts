@@ -7,10 +7,9 @@ export type Todo = {
   updatedAt: string;
 };
 
-// The form always sends both fields; an empty description clears it on the server.
 export type TodoInput = { title: string; description: string };
 
-// Keep in sync with server/src/todo.model.ts.
+// keep in sync with server/src/models/todo.model.ts
 export const TITLE_MAX_LENGTH = 200;
 export const DESCRIPTION_MAX_LENGTH = 1000;
 
@@ -35,7 +34,6 @@ export const todosApi = {
   remove: (id: string) => request<void>(`/${id}`, { method: 'DELETE' }),
 };
 
-// Resolves with the parsed JSON, or rejects with an Error whose message is safe to show the user.
 async function request<T>(path: string, { method = 'GET', body, signal }: RequestOptions) {
   let res: Response;
   try {

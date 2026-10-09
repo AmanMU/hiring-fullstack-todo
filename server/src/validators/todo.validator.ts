@@ -14,7 +14,6 @@ const description = z
   .trim()
   .max(DESCRIPTION_MAX_LENGTH, `Description must be at most ${DESCRIPTION_MAX_LENGTH} characters`);
 
-// strictObject rejects unknown keys, so a client can't sneak in fields like `done` or `_id`.
 export const createTodoSchema = z.strictObject({
   title,
   description: description.optional(),

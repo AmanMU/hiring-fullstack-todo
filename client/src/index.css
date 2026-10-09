@@ -11,9 +11,7 @@
   font-size: 15px;
   line-height: 1.6;
   color: var(--ink);
-  /* A lamp above the counter: a fixed-size glow at the top that fades into dark slate. */
   background: var(--counter) radial-gradient(900px 600px at 50% 0, var(--lamp), transparent);
-  /* The receipt is a physical object: paper stays light whatever the OS theme. */
   color-scheme: light;
 }
 

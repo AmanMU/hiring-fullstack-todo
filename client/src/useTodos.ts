@@ -3,7 +3,6 @@ import { errorMessage, todosApi, type Todo, type TodoInput } from './api';
 
 type LoadState = 'loading' | 'error' | 'ready';
 
-// An optimistically added todo has a temporary id until the server returns the real one.
 const UNSAVED_ID_PREFIX = 'unsaved-';
 
 export function isUnsaved(todo: Todo) {
@@ -17,7 +16,6 @@ export function useTodos() {
   const [actionError, setActionError] = useState<string | null>(null);
   const [pendingIds, setPendingIds] = useState<ReadonlySet<string>>(new Set());
 
-  // Runs on mount and again on each retry; aborting stops a stale response from landing.
   useEffect(() => {
     const controller = new AbortController();
     todosApi.list(controller.signal).then(
@@ -40,7 +38,6 @@ export function useTodos() {
   const replaceTodo = (todo: Todo) =>
     setTodos((current) => current.map((t) => (t._id === todo._id ? todo : t)));
 
-  // Marks the todo busy while its request runs, so its controls are disabled.
   async function whilePending(id: string, action: () => Promise<void>) {
     setPendingIds((ids) => new Set(ids).add(id));
     try {
@@ -53,9 +50,7 @@ export function useTodos() {
   const reportErrors = (action: Promise<void>) =>
     action.catch((error) => setActionError(errorMessage(error)));
 
-  // Every action is optimistic: the list changes at once and that one todo rolls back on failure.
-  // Toggle and delete report failures in the banner; create and edit rethrow so their form
-  // can give the user's text back.
+  // toggle/delete report failures in the banner; create/edit rethrow so the form can restore the text
 
   const toggleTodo = (todo: Todo) =>
     reportErrors(
