@@ -21,6 +21,8 @@ type RequestOptions = {
 
 const NETWORK_ERROR = 'Could not reach the server. Check that it is running and try again.';
 const SERVER_ERROR = 'Something went wrong. Please try again.';
+// what a proxy in front of the API (Vite's, in dev) answers when the API is down
+const BAD_GATEWAY = 502;
 
 export function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : SERVER_ERROR;
@@ -31,7 +33,7 @@ export const todosApi = {
   create: (input: TodoInput) => request<Todo>('', { method: 'POST', body: input }),
   update: (id: string, input: TodoInput) => request<Todo>(`/${id}`, { method: 'PUT', body: input }),
   toggle: (id: string) => request<Todo>(`/${id}/done`, { method: 'PATCH' }),
-  remove: (id: string) => request<void>(`/${id}`, { method: 'DELETE' }),
+  delete: (id: string) => request<void>(`/${id}`, { method: 'DELETE' }),
 };
 
 async function request<T>(path: string, { method = 'GET', body, signal }: RequestOptions) {
@@ -48,6 +50,7 @@ async function request<T>(path: string, { method = 'GET', body, signal }: Reques
     throw new Error(NETWORK_ERROR);
   }
 
+  if (res.status === BAD_GATEWAY) throw new Error(NETWORK_ERROR);
   if (res.status === 204) return undefined as T;
   const data = await res.json().catch(() => null);
   if (!res.ok) throw new Error(data?.error?.message ?? SERVER_ERROR);

@@ -47,7 +47,7 @@ export function TodoForm({
   }
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit} noValidate>
+    <form className={styles.form} onSubmit={handleSubmit}>
       <input
         ref={titleRef}
         className={styles.title}
@@ -63,6 +63,7 @@ export function TodoForm({
         className={styles.description}
         aria-label="Description (optional)"
         placeholder="Description (optional)"
+        rows={2}
         value={description}
         maxLength={DESCRIPTION_MAX_LENGTH}
         onChange={(event) => setDescription(event.target.value)}

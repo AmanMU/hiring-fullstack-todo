@@ -10,7 +10,7 @@ const PRINTED_ON = new Date().toLocaleDateString(undefined, {
   year: 'numeric',
 });
 
-function App() {
+export function App() {
   const {
     todos,
     loadState,
@@ -19,8 +19,8 @@ function App() {
     dismissError,
     pendingIds,
     createTodo,
+    updateTodo,
     toggleTodo,
-    editTodo,
     deleteTodo,
   } = useTodos();
 
@@ -29,7 +29,7 @@ function App() {
   const doneCount = todos.filter((todo) => todo.done).length;
 
   return (
-    <main className={styles.counter}>
+    <main className={styles.page}>
       <div className={styles.receipt}>
         <header className={styles.header}>
           <h1 className={styles.heading}>
@@ -76,8 +76,8 @@ function App() {
                   key={todo._id}
                   todo={todo}
                   isPending={pendingIds.has(todo._id)}
+                  onUpdate={updateTodo}
                   onToggle={toggleTodo}
-                  onEdit={editTodo}
                   onDelete={deleteTodo}
                 />
               ))}
@@ -88,5 +88,3 @@ function App() {
     </main>
   );
 }
-
-export default App;

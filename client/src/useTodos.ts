@@ -35,48 +35,31 @@ export function useTodos() {
     setLoadAttempt((attempt) => attempt + 1);
   }
 
-  const replaceTodo = (todo: Todo) =>
+  function dismissError() {
+    setActionError(null);
+  }
+
+  function replaceTodo(todo: Todo) {
     setTodos((current) => current.map((t) => (t._id === todo._id ? todo : t)));
+  }
 
   async function whilePending(id: string, action: () => Promise<void>) {
     setPendingIds((ids) => new Set(ids).add(id));
     try {
       await action();
     } finally {
-      setPendingIds((ids) => new Set([...ids].filter((pendingId) => pendingId !== id)));
+      setPendingIds((ids) => {
+        const next = new Set(ids);
+        next.delete(id);
+        return next;
+      });
     }
   }
 
-  const reportErrors = (action: Promise<void>) =>
-    action.catch((error) => setActionError(errorMessage(error)));
-
-  // toggle/delete report failures in the banner; create/edit rethrow so the form can restore the text
-
-  const toggleTodo = (todo: Todo) =>
-    reportErrors(
-      whilePending(todo._id, async () => {
-        replaceTodo({ ...todo, done: !todo.done });
-        try {
-          replaceTodo(await todosApi.toggle(todo._id));
-        } catch (error) {
-          replaceTodo(todo);
-          throw error;
-        }
-      }),
-    );
-
-  const deleteTodo = (todo: Todo) =>
-    reportErrors(
-      whilePending(todo._id, async () => {
-        setTodos((current) => current.filter((t) => t._id !== todo._id));
-        try {
-          await todosApi.remove(todo._id);
-        } catch (error) {
-          setTodos((current) => [...current, todo].sort(newestFirst));
-          throw error;
-        }
-      }),
-    );
+  // toggle/delete show failures in the banner; create/update rethrow so the form keeps the text
+  function reportErrors(request: Promise<void>) {
+    return request.catch((error) => setActionError(errorMessage(error)));
+  }
 
   function createTodo(input: TodoInput) {
     const now = new Date().toISOString();
@@ -100,8 +83,8 @@ export function useTodos() {
     });
   }
 
-  const editTodo = (todo: Todo, input: TodoInput) =>
-    whilePending(todo._id, async () => {
+  function updateTodo(todo: Todo, input: TodoInput) {
+    return whilePending(todo._id, async () => {
       replaceTodo({ ...todo, title: input.title, description: input.description || undefined });
       try {
         replaceTodo(await todosApi.update(todo._id, input));
@@ -110,17 +93,46 @@ export function useTodos() {
         throw error;
       }
     });
+  }
+
+  function toggleTodo(todo: Todo) {
+    return reportErrors(
+      whilePending(todo._id, async () => {
+        replaceTodo({ ...todo, done: !todo.done });
+        try {
+          replaceTodo(await todosApi.toggle(todo._id));
+        } catch (error) {
+          replaceTodo(todo);
+          throw error;
+        }
+      }),
+    );
+  }
+
+  function deleteTodo(todo: Todo) {
+    return reportErrors(
+      whilePending(todo._id, async () => {
+        setTodos((current) => current.filter((t) => t._id !== todo._id));
+        try {
+          await todosApi.delete(todo._id);
+        } catch (error) {
+          setTodos((current) => [...current, todo].sort(newestFirst));
+          throw error;
+        }
+      }),
+    );
+  }
 
   return {
     todos,
     loadState,
     reload,
     actionError,
-    dismissError: () => setActionError(null),
+    dismissError,
     pendingIds,
     createTodo,
+    updateTodo,
     toggleTodo,
-    editTodo,
     deleteTodo,
   };
 }
