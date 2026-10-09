@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState, type MouseEvent } from 'react';
 import type { Todo, TodoInput } from '../api';
 import { TodoForm } from './TodoForm';
 import styles from './TodoItem.module.css';
@@ -13,6 +13,22 @@ type TodoItemProps = {
 
 export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const editButtonRef = useRef<HTMLButtonElement>(null);
+  const wasEditing = useRef(false);
+
+  // When the editor closes (Save or Cancel), give focus back to this row's Edit button.
+  useEffect(() => {
+    if (wasEditing.current && !isEditing) editButtonRef.current?.focus();
+    wasEditing.current = isEditing;
+  }, [isEditing]);
+
+  function handleDelete(event: MouseEvent<HTMLButtonElement>) {
+    // Move focus to a neighbouring row first, so keyboard users keep their place in the list.
+    const row = event.currentTarget.closest('li');
+    const neighbour = row?.nextElementSibling ?? row?.previousElementSibling;
+    neighbour?.querySelector<HTMLElement>('input')?.focus();
+    onDelete(todo);
+  }
 
   if (isEditing) {
     return (
@@ -20,10 +36,10 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
         <TodoForm
           initial={{ title: todo.title, description: todo.description ?? '' }}
           submitLabel="Save"
-          onSubmit={(input) => {
-            // The edit is optimistic, so close the form right away.
+          onSubmit={async (input) => {
+            // Closes only once saved; if the save fails, the form stays open with the text.
+            await onEdit(todo, input);
             setIsEditing(false);
-            return onEdit(todo, input);
           }}
           onCancel={() => setIsEditing(false)}
         />
@@ -47,6 +63,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
       </div>
       <div className={styles.actions}>
         <button
+          ref={editButtonRef}
           onClick={() => setIsEditing(true)}
           disabled={isPending}
           aria-label={`Edit "${todo.title}"`}
@@ -55,7 +72,7 @@ export function TodoItem({ todo, isPending, onToggle, onEdit, onDelete }: TodoIt
         </button>
         <button
           className={styles.delete}
-          onClick={() => onDelete(todo)}
+          onClick={handleDelete}
           disabled={isPending}
           aria-label={`Delete "${todo.title}"`}
         >

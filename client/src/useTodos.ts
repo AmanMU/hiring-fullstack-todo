@@ -45,27 +45,17 @@ export function useTodos() {
     }
   }
 
-  // Shows `optimistic` at once, then the server's copy; restores `original` if the request fails.
-  const updateOptimistically = (original: Todo, optimistic: Todo, send: () => Promise<Todo>) =>
-    trackPending(original._id, async () => {
-      replaceTodo(optimistic);
+  // Optimistic: flips at once, then takes the server's copy, or flips back if the request fails.
+  const toggleTodo = (todo: Todo) =>
+    trackPending(todo._id, async () => {
+      replaceTodo({ ...todo, done: !todo.done });
       try {
-        replaceTodo(await send());
+        replaceTodo(await todosApi.toggle(todo._id));
       } catch (error) {
-        replaceTodo(original);
+        replaceTodo(todo);
         throw error;
       }
     });
-
-  const toggleTodo = (todo: Todo) =>
-    updateOptimistically(todo, { ...todo, done: !todo.done }, () => todosApi.toggle(todo._id));
-
-  const editTodo = (todo: Todo, input: TodoInput) =>
-    updateOptimistically(
-      todo,
-      { ...todo, title: input.title, description: input.description || undefined },
-      () => todosApi.update(todo._id, input),
-    );
 
   const deleteTodo = (todo: Todo) =>
     trackPending(todo._id, async () => {
@@ -78,10 +68,14 @@ export function useTodos() {
       }
     });
 
-  // Not optimistic: the form shows "Adding…" and keeps its text if this throws.
+  // Create and edit wait for the server: the form shows "Saving…" and keeps its text if they throw.
   async function createTodo(input: TodoInput) {
     const todo = await todosApi.create(input);
     setTodos((current) => [todo, ...current]);
+  }
+
+  async function editTodo(todo: Todo, input: TodoInput) {
+    replaceTodo(await todosApi.update(todo._id, input));
   }
 
   return {
