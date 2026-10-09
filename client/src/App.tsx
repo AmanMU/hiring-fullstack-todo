@@ -32,7 +32,15 @@ function App() {
     <main className={styles.counter}>
       <div className={styles.receipt}>
         <header className={styles.header}>
-          <h1 className={styles.heading}>Things to do</h1>
+          <h1 className={styles.heading}>
+            Things to do
+            {hasTodos && (
+              <span className={styles.count}>
+                {' '}
+                ({doneCount}/{todos.length})
+              </span>
+            )}
+          </h1>
           <p className={styles.date}>{PRINTED_ON}</p>
         </header>
 
@@ -76,19 +84,6 @@ function App() {
             </ul>
           )}
         </section>
-
-        {hasTodos && (
-          <dl className={`${styles.section} ${styles.tally}`}>
-            <div>
-              <dt>Items</dt>
-              <dd>{todos.length}</dd>
-            </div>
-            <div>
-              <dt>Done</dt>
-              <dd>{doneCount}</dd>
-            </div>
-          </dl>
-        )}
       </div>
     </main>
   );
