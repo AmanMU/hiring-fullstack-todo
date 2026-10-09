@@ -42,9 +42,20 @@ function describeError(err: unknown): ErrorDescription {
   if (hasType(err, 'entity.too.large')) {
     return { status: 413, message: 'Request body is too large' };
   }
+  // Express and body-parser mark other client mistakes (bad URL encoding, unsupported charset) with a 4xx status.
+  const status = clientErrorStatus(err);
+  if (status !== undefined && err instanceof Error) {
+    return { status, message: err.message };
+  }
   return { status: 500, message: 'Something went wrong. Please try again.' };
 }
 
 function hasType(err: unknown, type: string): boolean {
   return typeof err === 'object' && err !== null && 'type' in err && err.type === type;
+}
+
+function clientErrorStatus(err: unknown): number | undefined {
+  if (typeof err !== 'object' || err === null || !('status' in err)) return undefined;
+  const { status } = err;
+  return typeof status === 'number' && status >= 400 && status < 500 ? status : undefined;
 }

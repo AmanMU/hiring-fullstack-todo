@@ -58,6 +58,10 @@ describe('PUT /api/todos/:id', () => {
     expect(res.body).not.toHaveProperty('description');
   });
 
+  it('returns 400, not 500, for an id with broken URL encoding', async () => {
+    await request(app).put('/api/todos/%ZZ').send({ title: 'x' }).expect(400);
+  });
+
   it('returns 404 for a todo that does not exist', async () => {
     await request(app).put(`/api/todos/${MISSING_ID}`).send({ title: 'x' }).expect(404);
   });
