@@ -72,8 +72,9 @@
 }
 
 /* Tally lines with dotted leaders, like a till receipt's totals. */
+/* Reset only the bottom margin: margin-top comes from .section. */
 .tally {
-  margin: 0;
+  margin-bottom: 0;
 }
 
 .tally div {
