@@ -6,9 +6,10 @@
 
 .receipt {
   position: relative;
-  max-width: 420px;
+  /* About 65 characters of monospace per line: wide enough for desktop, still easy to read. */
+  max-width: 600px;
   margin: 0 auto;
-  padding: 28px 24px 20px;
+  padding: 28px 32px 20px;
   background: var(--paper);
   box-shadow: 0 18px 40px rgb(0 0 0 / 35%);
 }

@@ -1,5 +1,6 @@
 :root {
-  --counter: #3a4750;
+  --counter: #2a333b;
+  --lamp: #56677a;
   --paper: #fbfbf8;
   --ink: #232323;
   --ink-faded: #5f5f5f;
@@ -10,7 +11,8 @@
   font-size: 15px;
   line-height: 1.6;
   color: var(--ink);
-  background: var(--counter);
+  /* A lamp above the counter: a fixed-size glow at the top that fades into dark slate. */
+  background: var(--counter) radial-gradient(900px 600px at 50% 0, var(--lamp), transparent);
   /* The receipt is a physical object: paper stays light whatever the OS theme. */
   color-scheme: light;
 }
